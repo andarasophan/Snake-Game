@@ -24,27 +24,6 @@ snake[0] = {
     y: gameY / 2 + 60
 };
 
-// function makeFood(objectPos1, objectPos2 = [], objectPos3 = [], objectPos4 = [], objectPos5 = []) { //junkfood karena array input pertama objectPos1(bentuknya array)
-//     let obj = {
-//         x: (Math.floor(Math.random() * 20.99999) + 1) * box,
-//         y: (Math.floor(Math.random() * 18.99999) + 3) * box
-//     }
-//     if (Array.isArray(objectPos1)) {
-//         for (let i = 0; i < objectPos1.length; i++) {
-//             if (obj.x === objectPos1[i].x && obj.y === objectPos1[i].y || obj.x === objectPos2.x && obj.y === objectPos2.y || obj.x === objectPos3.x && obj.y === objectPos3.y || obj.x === objectPos4.x && obj.y === objectPos4.y || obj.x === objectPos5.x && obj.y === objectPos5.y) {
-//                 return makeFood(objectPos1, objectPos2, objectPos3, objectPos4, objectPos5);
-//             }
-//         }
-//         return obj;
-//     } else {
-//         if (obj.x === objectPos1.x && obj.y === objectPos1.y || obj.x === objectPos2.x && obj.y === objectPos2.y || obj.x === objectPos3.x && obj.y === objectPos3.y || obj.x === objectPos4.x && obj.y === objectPos4.y || obj.x === objectPos5.x && obj.y === objectPos5.y) {
-//             return makeFood(objectPos1, objectPos2, objectPos3, objectPos4, objectPos5);
-//         } else {
-//             return obj;
-//         }
-//     }
-// }
-
 function makeFood() {
     let obj = {
         x: (Math.floor(Math.random() * 20.99999) + 1) * box,
@@ -112,7 +91,7 @@ function Collision(head, array) {
 
 function eatJunk(head, array) {
     for (let i = 0; i < array.length; i++) {
-        if (head.x - box / 2 == array[i].x && head.y - box / 2 == array[i].y) {
+        if (head.x == array[i].x && head.y == array[i].y) {
             array.splice(i, 1);
             return true;
         }
@@ -208,25 +187,30 @@ function draw() {
     if (d == "DOWN") snakeY += box;
 
 
-    let x = snake[snake.length - 1];
-    if (snakeX - box / 2 == food.x && snakeY - box / 2 == food.y) {
+    let x = snake[snake.length - 1]; //x buat ujung ular diwarnai saat gameover
+
+    let convertHead = {};
+    convertHead['x'] = snake[0].x - box / 2;
+    convertHead['y'] = snake[0].y - box / 2;
+
+    if (convertHead.x == food.x && convertHead.y == food.y) {
         score++;
-        food = makeFood(junkfood, snake[0], veget, bomb);
+        food = makeFood(junkfood, convertHead, veget, bomb);
         let prob = Math.random();
         if (prob < 1 / 3) {
-            junkfood.push(makeFood(junkfood, snake[0], food, veget, bomb));
+            junkfood.push(makeFood(junkfood, convertHead, food, veget, bomb));
         } else if (prob < 2 / 3) {
             if (veget.x === undefined) {
-                veget = makeFood(junkfood, snake[0], food, bomb);
+                veget = makeFood(junkfood, convertHead, food, bomb);
             }
         } else {
             if (bomb.x === undefined) {
-                bomb = makeFood(junkfood, snake[0], food, veget);
+                bomb = makeFood(junkfood, convertHead, food, veget);
             }
         }
-    } else if (eatJunk(snake[0], junkfood)) {
+    } else if (eatJunk(convertHead, junkfood)) {
         veget = {};
-    } else if (snakeX - box / 2 == veget.x && snakeY - box / 2 == veget.y) {
+    } else if (convertHead.x == veget.x && convertHead.y == veget.y) {
         score++;
         snake.pop();
         snake.pop();
