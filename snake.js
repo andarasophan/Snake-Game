@@ -8,7 +8,7 @@ let gameY = 630;
 
 let score = 0;
 
-//load all food
+//read all food
 const meatImg = new Image();
 meatImg.src = 'img/meat.png';
 const junk = new Image();
@@ -19,7 +19,6 @@ const bmb = new Image();
 bmb.src = 'img/bomb.png';
 
 let snake = [];
-
 snake[0] = {
     x: gameX / 2,
     y: gameY / 2 + 60
@@ -100,6 +99,42 @@ function eatFood(head, array) {
     return false;
 }
 
+function drawSnake(snake, colorRGB) {
+    for (let i = 0; i < snake.length; i++) {
+        ctx.beginPath();
+        if (i === 0) {
+            ctx.arc(snake[i].x, snake[i].y, 15, 0, Math.PI * 2, true);
+            ctx.fillStyle = colorRGB;
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(snake[i].x - box / 4, snake[i].y - box / 4, 3, 0, Math.PI * 2, true);
+            ctx.fillStyle = 'white';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(snake[i].x - box / 4 + box / 2, snake[i].y - box / 4, 3, 0, Math.PI * 2, true);
+            ctx.fillStyle = 'white';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(snake[i].x - box / 4 + box / 2, snake[i].y - box / 4, 2, 0, Math.PI * 2, true);
+            ctx.fillStyle = 'black';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(snake[i].x - box / 4, snake[i].y - box / 4, 2, 0, Math.PI * 2, true);
+            ctx.fillStyle = 'black';
+            ctx.fill();
+
+        } else {
+            ctx.arc(snake[i].x, snake[i].y, 15, 0, Math.PI * 2, true);
+            ctx.strokeStyle = colorRGB;
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(snake[i].x, snake[i].y, 14, 0, Math.PI * 2, true);
+            ctx.fillStyle = colorRGB;
+            ctx.fill();
+        }
+    }
+}
+
 function draw() {
     //tampilan atas
     ctx.fillStyle = 'white';
@@ -135,41 +170,9 @@ function draw() {
     ctx.fillStyle = 'rgb(250,210,210)';
     ctx.fillRect(30, 90, gameX - 60, gameY - 60);
 
-
     //draw snake
-    for (let i = 0; i < snake.length; i++) {
-        ctx.beginPath();
-        if (i === 0) {
-            ctx.arc(snake[i].x, snake[i].y, 15, 0, Math.PI * 2, true);
-            ctx.fillStyle = 'rgb(100,80,10)';
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(snake[i].x - box / 4, snake[i].y - box / 4, 3, 0, Math.PI * 2, true);
-            ctx.fillStyle = 'white';
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(snake[i].x - box / 4 + box / 2, snake[i].y - box / 4, 3, 0, Math.PI * 2, true);
-            ctx.fillStyle = 'white';
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(snake[i].x - box / 4 + box / 2, snake[i].y - box / 4, 2, 0, Math.PI * 2, true);
-            ctx.fillStyle = 'black';
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(snake[i].x - box / 4, snake[i].y - box / 4, 2, 0, Math.PI * 2, true);
-            ctx.fillStyle = 'black';
-            ctx.fill();
+    drawSnake(snake, 'rgb(100,80,10)')
 
-        } else {
-            ctx.arc(snake[i].x, snake[i].y, 15, 0, Math.PI * 2, true);
-            ctx.strokeStyle = 'rgb(100,80,10)';
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.arc(snake[i].x, snake[i].y, 14, 0, Math.PI * 2, true);
-            ctx.fillStyle = 'rgb(100,80,10)';
-            ctx.fill();
-        }
-    }
     //draw items (all food & bomb)
     ctx.drawImage(meatImg, meat.x, meat.y, box, box);
     for (let i = 0; i < veget.length; i++) {
@@ -181,6 +184,7 @@ function draw() {
     for (let i = 0; i < junkfood.length; i++) {
         ctx.drawImage(junk, junkfood[i].x, junkfood[i].y, box, box);
     }
+
     // old head position
     let snakeX = snake[0].x;
     let snakeY = snake[0].y;
@@ -191,9 +195,7 @@ function draw() {
     if (d == "RIGHT") snakeX += box;
     if (d == "DOWN") snakeY += box;
 
-
-    let x = snake[snake.length - 1]; //x buat ujung ular diwarnai saat gameover
-
+    let tail = snake[snake.length - 1]; //buat ujung ular diwarnai saat gameover
     let convertHead = {};
     convertHead['x'] = snake[0].x - box / 2;
     convertHead['y'] = snake[0].y - box / 2;
@@ -223,7 +225,7 @@ function draw() {
         snake.pop();
         snake.pop();
     } else {
-        x = snake.pop();
+        tail = snake.pop();
     }
 
     // add new Head
@@ -234,45 +236,13 @@ function draw() {
 
     // game over
     if (snakeX < box || snakeX > 22 * box || snakeY < 3 * box || snakeY > 22 * box || Collision(newHead, snake) || Collision(convertHead, bomb)) {
-        for (let i = 0; i < snake.length; i++) {
-            ctx.beginPath();
-            if (i === 0) {
-                ctx.arc(snake[i].x, snake[i].y, 15, 0, Math.PI * 2, true);
-                ctx.fillStyle = 'rgb(100,0,0)';
-                ctx.fill();
-                ctx.beginPath();
-                ctx.arc(snake[i].x - box / 4, snake[i].y - box / 4, 3, 0, Math.PI * 2, true);
-                ctx.fillStyle = 'white';
-                ctx.fill();
-                ctx.beginPath();
-                ctx.arc(snake[i].x - box / 4 + box / 2, snake[i].y - box / 4, 3, 0, Math.PI * 2, true);
-                ctx.fillStyle = 'white';
-                ctx.fill();
-                ctx.beginPath();
-                ctx.arc(snake[i].x - box / 4 + box / 2, snake[i].y - box / 4, 2, 0, Math.PI * 2, true);
-                ctx.fillStyle = 'black';
-                ctx.fill();
-                ctx.beginPath();
-                ctx.arc(snake[i].x - box / 4, snake[i].y - box / 4, 2, 0, Math.PI * 2, true);
-                ctx.fillStyle = 'black';
-                ctx.fill();
-
-            } else {
-                ctx.arc(snake[i].x, snake[i].y, 15, 0, Math.PI * 2, true);
-                ctx.strokeStyle = 'rgb(100,0,0)';
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.arc(snake[i].x, snake[i].y, 14, 0, Math.PI * 2, true);
-                ctx.fillStyle = 'rgb(100,0,0)';
-                ctx.fill();
-            }
-        }
+        drawSnake(snake, 'rgb(100,0,0)')
         ctx.beginPath();
-        ctx.arc(x.x, x.y, 15, 0, Math.PI * 2, true);
+        ctx.arc(tail.x, tail.y, 15, 0, Math.PI * 2, true);
         ctx.strokeStyle = 'rgb(100,0,0)';
         ctx.stroke();
         ctx.beginPath();
-        ctx.arc(x.x, x.y, 14, 0, Math.PI * 2, true);
+        ctx.arc(tail.x, tail.y, 14, 0, Math.PI * 2, true);
         ctx.fillStyle = 'rgb(100,0,0)';
         ctx.fill();
 
