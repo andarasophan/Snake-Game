@@ -8,8 +8,9 @@ let gameY = 630;
 
 let score = 0;
 
-const meat = new Image();
-meat.src = 'img/meat.png';
+//load all food
+const meatImg = new Image();
+meatImg.src = 'img/meat.png';
 const junk = new Image();
 junk.src = 'img/junk.png';
 const vgtbl = new Image();
@@ -58,10 +59,10 @@ function makeFood() {
     return obj;
 }
 
-let food = makeFood(snake[0]);
+let meat = makeFood(snake[0]);
 let junkfood = [];
-let veget = {};
-let bomb = {};
+let veget = [];
+let bomb = [];
 
 //control the snake
 let d;
@@ -89,7 +90,7 @@ function Collision(head, array) {
     return false;
 }
 
-function eatJunk(head, array) {
+function eatFood(head, array) {
     for (let i = 0; i < array.length; i++) {
         if (head.x == array[i].x && head.y == array[i].y) {
             array.splice(i, 1);
@@ -170,9 +171,13 @@ function draw() {
         }
     }
     //draw items (all food & bomb)
-    ctx.drawImage(meat, food.x, food.y, box, box);
-    ctx.drawImage(vgtbl, veget.x, veget.y, box, box);
-    ctx.drawImage(bmb, bomb.x, bomb.y, box, box);
+    ctx.drawImage(meatImg, meat.x, meat.y, box, box);
+    for (let i = 0; i < veget.length; i++) {
+        ctx.drawImage(vgtbl, veget[i].x, veget[i].y, box, box);
+    }
+    for (let i = 0; i < bomb.length; i++) {
+        ctx.drawImage(bmb, bomb[i].x, bomb[i].y, box, box);
+    }
     for (let i = 0; i < junkfood.length; i++) {
         ctx.drawImage(junk, junkfood[i].x, junkfood[i].y, box, box);
     }
@@ -193,28 +198,30 @@ function draw() {
     convertHead['x'] = snake[0].x - box / 2;
     convertHead['y'] = snake[0].y - box / 2;
 
-    if (convertHead.x == food.x && convertHead.y == food.y) {
+    if (convertHead.x == meat.x && convertHead.y == meat.y) {
         score++;
-        food = makeFood(junkfood, convertHead, veget, bomb);
+        meat = makeFood(junkfood, convertHead, veget, bomb);
+        let prob = Math.random();
+        if (prob < 3 / 7) {
+            junkfood.push(makeFood(junkfood, convertHead, meat, veget, bomb));
+        } else if (prob < 6 / 7) {
+            veget.push(makeFood(junkfood, convertHead, meat, veget, bomb));
+        } else {
+            bomb.push(makeFood(junkfood, convertHead, meat, veget, bomb));
+        }
+    } else if (eatFood(convertHead, junkfood)) {
         let prob = Math.random();
         if (prob < 1 / 3) {
-            junkfood.push(makeFood(junkfood, convertHead, food, veget, bomb));
-        } else if (prob < 2 / 3) {
-            if (veget.x === undefined) {
-                veget = makeFood(junkfood, convertHead, food, bomb);
-            }
-        } else {
-            if (bomb.x === undefined) {
-                bomb = makeFood(junkfood, convertHead, food, veget);
-            }
+            veget.push(makeFood(junkfood, convertHead, meat, veget, bomb));
         }
-    } else if (eatJunk(convertHead, junkfood)) {
-        veget = {};
-    } else if (convertHead.x == veget.x && convertHead.y == veget.y) {
+    } else if (eatFood(convertHead, veget)) {
+        let prob = Math.random();
+        if (prob < 1 / 3) {
+            bomb.push(makeFood(junkfood, convertHead, meat, veget, bomb));
+        }
         score++;
         snake.pop();
         snake.pop();
-        veget = {};
     } else {
         x = snake.pop();
     }
@@ -226,7 +233,7 @@ function draw() {
     };
 
     // game over
-    if (snakeX < box || snakeX > 22 * box || snakeY < 3 * box || snakeY > 22 * box || Collision(newHead, snake) || snakeX - box / 2 === bomb.x && snakeY - box / 2 === bomb.y) {
+    if (snakeX < box || snakeX > 22 * box || snakeY < 3 * box || snakeY > 22 * box || Collision(newHead, snake) || Collision(convertHead, bomb)) {
         for (let i = 0; i < snake.length; i++) {
             ctx.beginPath();
             if (i === 0) {
