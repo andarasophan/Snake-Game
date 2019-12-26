@@ -5,6 +5,8 @@ const box = 30;
 const gameX = 690;
 const gameY = 630;
 
+let speed = 100;
+
 //read all food
 const meatImg = new Image();
 meatImg.src = 'img/meat.png';
@@ -61,11 +63,13 @@ let junkfood = [];
 let veget = [];
 let bomb = [];
 
-//control the snake
+//control the game
 let d;
-document.addEventListener("keydown", direction);
+let pause = false;
+let dead = false;
+document.addEventListener("keydown", keyboard);
 
-function direction(event) {
+function keyboard(event) {
     let key = event.keyCode;
     if (key == 37 && d != "RIGHT") {
         d = "LEFT";
@@ -75,6 +79,21 @@ function direction(event) {
         d = "RIGHT";
     } else if (key == 40 && d != "UP") {
         d = "DOWN";
+    }
+
+    if (key == 16 && dead === false && pause === false) {
+        pause = true;
+        clearInterval(game);
+        ctx.font = '70px arial';
+        ctx.textBaseline = 'hanging';
+        ctx.fillStyle = 'white';
+        ctx.fillText(`PAUSED`, 205, gameY / 2);
+        ctx.font = '30px arial';
+        ctx.fillText(`Press ctrl to continue`, 206, gameY / 2 + 70);
+    }
+    if (key == 17 && pause === true && dead === false) {
+        game = setInterval(draw, speed);
+        pause = false;
     }
 }
 
@@ -172,7 +191,6 @@ function draw() {
         }
     }
     // ctx.clearRect(30, 90, gameX - 60, gameY - 60)
-
     ctx.fillStyle = 'rgb(250,210,210)';
     ctx.fillRect(30, 90, gameX - 60, gameY - 60);
 
@@ -196,10 +214,15 @@ function draw() {
     let snakeY = snake[0].y;
 
     // which direction
-    if (d == "LEFT") snakeX -= box;
-    if (d == "UP") snakeY -= box;
-    if (d == "RIGHT") snakeX += box;
-    if (d == "DOWN") snakeY += box;
+    if (d == "LEFT") {
+        snakeX -= box;
+    } else if (d == "UP") {
+        snakeY -= box;
+    } else if (d == "RIGHT") {
+        snakeX += box;
+    } else if (d == "DOWN") {
+        snakeY += box;
+    }
 
     let tail = snake[snake.length - 1]; //buat ujung ular diwarnai saat gameover
     let convertHead = {};
@@ -249,11 +272,12 @@ function draw() {
             drawHead(tail, 'rgb(100,0,0)')
         }
         clearInterval(game);
+        dead = true;
     }
 
     snake.unshift(newHead);
 }
-let game = setInterval(draw, 100);
+let game = setInterval(draw, speed);
 
 const newGame = document.getElementById('reset');
 newGame.addEventListener('click', reset)
@@ -272,5 +296,7 @@ function reset() {
     veget = [];
     bomb = [];
     d = undefined;
-    game = setInterval(draw, 100);
+    pause = false;
+    dead = false;
+    game = setInterval(draw, speed);
 }
