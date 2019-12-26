@@ -1,0 +1,44 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: arial;
+}
+
+body {
+    background: bisque;
+}
+
+canvas {
+    margin-top: 30px;
+}
+
+.flx {
+    display: flex;
+}
+
+.ctr {
+    justify-content: center;
+}
+
+.rules {
+    padding: 60px;
+}
+
+.rules h3 {
+    border-bottom: 6px solid;
+}
+
+.rules ul {
+    padding: 10px 20px;
+}
+
+.rules ul li {
+    font-size: 15px;
+    color: rgb(63, 63, 63);
+    /* text-transform: uppercase; */
+}
+
+.rules img {
+    width: 15px;
+    height: 15px;
+}

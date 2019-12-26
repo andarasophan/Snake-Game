@@ -140,21 +140,21 @@ function draw() {
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, 690, 60);
 
-    ctx.font = '30px serif';
+    ctx.font = '30px arial';
     ctx.textBaseline = 'hanging';
     ctx.fillStyle = 'rgb(0,0,0)';
-    ctx.fillText(`Score: ${score}`, 15, 18);
+    ctx.fillText(`Score: ${score}`, 15, 22);
 
-    ctx.font = '15px serif';
+    ctx.font = '15px arial';
     ctx.textBaseline = 'hanging';
     ctx.fillStyle = 'rgb(0,0,0)';
-    ctx.fillText(`Length: ${snake.length}`, 17, 6);
+    ctx.fillText(`Length: ${snake.length}`, 17, 10);
 
-    ctx.font = '15px serif';
+    ctx.font = '15px arial';
     ctx.textBaseline = 'bottom';
     ctx.fillStyle = 'rgb(0,0,0)';
-    ctx.fillText('2019 By Andara Sophan', 540, 40);
-    ctx.fillText('Game Snake', 611, 20);
+    ctx.fillText('2019 By Andara Sophan', 515, 45);
+    ctx.fillText('Game Snake', 586, 28);
 
     //untuk game screen
     ctx.fillStyle = 'rgb(100,100,300)';
