@@ -20,25 +20,51 @@ canvas {
     justify-content: center;
 }
 
-.rules {
+.kotak {
     padding: 60px;
 }
 
-.rules h3 {
+.kotak h3 {
     border-bottom: 6px solid;
 }
 
-.rules ul {
+.kotak ul {
     padding: 10px 20px;
 }
 
-.rules ul li {
+.kotak ul li {
     font-size: 15px;
     color: rgb(63, 63, 63);
     /* text-transform: uppercase; */
 }
 
-.rules img {
+.kotak img {
     width: 15px;
     height: 15px;
+}
+
+button {
+    width: 115px;
+    height: 25px;
+    background: #6464ff;
+    border-radius: 10px;
+    font: normal 15px/25px 'arial';
+    font-weight: 700;
+    letter-spacing: 0;
+    color: white;
+    border: none;
+    text-align: center;
+
+    display: block;
+    margin: 10px auto;
+}
+
+button:hover {
+    background-color: #6464ff;
+    opacity: 0.8;
+    color: white;
+}
+
+button:active {
+    transform: translateY(4px);
 }

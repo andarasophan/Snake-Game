@@ -2,11 +2,8 @@ const cvs = document.getElementById("snake");
 const ctx = cvs.getContext("2d");
 
 const box = 30;
-let screen = 630;
-let gameX = 690;
-let gameY = 630;
-
-let score = 0;
+const gameX = 690;
+const gameY = 630;
 
 //read all food
 const meatImg = new Image();
@@ -17,12 +14,6 @@ const vgtbl = new Image();
 vgtbl.src = 'img/vegetable.png';
 const bmb = new Image();
 bmb.src = 'img/bomb.png';
-
-let snake = [];
-snake[0] = {
-    x: gameX / 2,
-    y: gameY / 2 + 60
-};
 
 function makeFood() {
     let obj = {
@@ -58,6 +49,13 @@ function makeFood() {
     return obj;
 }
 
+//initialization
+let score = 0;
+let snake = [];
+snake[0] = {
+    x: gameX / 2,
+    y: gameY / 2 + 60
+};
 let meat = makeFood(snake[0]);
 let junkfood = [];
 let veget = [];
@@ -99,38 +97,46 @@ function eatFood(head, array) {
     return false;
 }
 
+function drawHead(snake, colorRGB) {
+    ctx.beginPath();
+    ctx.arc(snake.x, snake.y, 15, 0, Math.PI * 2, true);
+    ctx.fillStyle = colorRGB;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(snake.x - box / 4, snake.y - box / 4, 3, 0, Math.PI * 2, true);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(snake.x - box / 4 + box / 2, snake.y - box / 4, 3, 0, Math.PI * 2, true);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(snake.x - box / 4 + box / 2, snake.y - box / 4, 2, 0, Math.PI * 2, true);
+    ctx.fillStyle = 'black';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(snake.x - box / 4, snake.y - box / 4, 2, 0, Math.PI * 2, true);
+    ctx.fillStyle = 'black';
+    ctx.fill();
+}
+
+function drawBody(snake, colorRGB) {
+    ctx.beginPath();
+    ctx.arc(snake.x, snake.y, 15, 0, Math.PI * 2, true);
+    ctx.strokeStyle = colorRGB;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(snake.x, snake.y, 14, 0, Math.PI * 2, true);
+    ctx.fillStyle = colorRGB;
+    ctx.fill();
+}
+
 function drawSnake(snake, colorRGB) {
     for (let i = 0; i < snake.length; i++) {
-        ctx.beginPath();
         if (i === 0) {
-            ctx.arc(snake[i].x, snake[i].y, 15, 0, Math.PI * 2, true);
-            ctx.fillStyle = colorRGB;
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(snake[i].x - box / 4, snake[i].y - box / 4, 3, 0, Math.PI * 2, true);
-            ctx.fillStyle = 'white';
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(snake[i].x - box / 4 + box / 2, snake[i].y - box / 4, 3, 0, Math.PI * 2, true);
-            ctx.fillStyle = 'white';
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(snake[i].x - box / 4 + box / 2, snake[i].y - box / 4, 2, 0, Math.PI * 2, true);
-            ctx.fillStyle = 'black';
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(snake[i].x - box / 4, snake[i].y - box / 4, 2, 0, Math.PI * 2, true);
-            ctx.fillStyle = 'black';
-            ctx.fill();
-
+            drawHead(snake[i], colorRGB);
         } else {
-            ctx.arc(snake[i].x, snake[i].y, 15, 0, Math.PI * 2, true);
-            ctx.strokeStyle = colorRGB;
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.arc(snake[i].x, snake[i].y, 14, 0, Math.PI * 2, true);
-            ctx.fillStyle = colorRGB;
-            ctx.fill();
+            drawBody(snake[i], colorRGB);
         }
     }
 }
@@ -237,19 +243,34 @@ function draw() {
     // game over
     if (snakeX < box || snakeX > 22 * box || snakeY < 3 * box || snakeY > 22 * box || Collision(newHead, snake) || Collision(convertHead, bomb)) {
         drawSnake(snake, 'rgb(100,0,0)')
-        ctx.beginPath();
-        ctx.arc(tail.x, tail.y, 15, 0, Math.PI * 2, true);
-        ctx.strokeStyle = 'rgb(100,0,0)';
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(tail.x, tail.y, 14, 0, Math.PI * 2, true);
-        ctx.fillStyle = 'rgb(100,0,0)';
-        ctx.fill();
-
+        if (snake.length >= 1) {
+            drawBody(tail, 'rgb(100,0,0)')
+        } else {
+            drawHead(tail, 'rgb(100,0,0)')
+        }
         clearInterval(game);
     }
 
     snake.unshift(newHead);
 }
-
 let game = setInterval(draw, 100);
+
+const newGame = document.getElementById('reset');
+newGame.addEventListener('click', reset)
+
+function reset() {
+    clearInterval(game)
+    //reset initialization
+    score = 0;
+    snake = [];
+    snake[0] = {
+        x: gameX / 2,
+        y: gameY / 2 + 60
+    };
+    meat = makeFood(snake[0]);
+    junkfood = [];
+    veget = [];
+    bomb = [];
+    d = undefined;
+    game = setInterval(draw, 100);
+}
