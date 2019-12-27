@@ -13,18 +13,39 @@
     <main class="flx ctr">
         <canvas id="snake" width="690" height="690"></canvas>
         <section class="kotak">
+            <button id="reset" type="button">New Game</button>
+            <p>Or just simply press <span>enter</span> to reset the game.</p>
+            <p>Enjoy!</p>
+            <br>
             <section class="rules">
                 <h3>Rules:</h3>
                 <ul>
-                    <li>Eating meat <img src="img/meat.png" alt=""> increases your length and score</li>
-                    <li>Eating carrot <img src="img/vegetable.png" alt=""> increases score and decreases your length
+                    <li>Eating <i>meat</i> <img src="img/meat.png" alt=""> increases your <b>length</b> and <b>score</b>
                     </li>
-                    <li>Eating junkfood <img src="img/junk.png" alt=""> only increases your length</li>
+                    <li>Eating <i>carrot</i> <img src="img/vegetable.png" alt=""> increases <b>score</b> and decreases
+                        your <b>length</b>
+                    </li>
+                    <li>Eating <i>junkfood</i> <img src="img/junk.png" alt=""> <b>only</b> increases your <b>length</b>
+                    </li>
+                    <li>Eating <i>energydrink</i> <img src="img/energy.png" alt=""> boost your <b>invisible</b> power
+                    <li><b>Died</b> when:<ul>
+                            <li>Hit your own body</li>
+                            <li>Hit the walls</li>
+                            <li>Eating <i>bomb</i> <img src="img/bomb.png" alt="">
+                        </ul>
+                    </li>
                 </ul>
             </section>
-            <button id="reset" type="button">New Game</button>
-            <p>Press <span>shift</span> to pause the game</p>
-            <p>Enjoy!</p>
+            <section class="controls">
+                <h3>Controls:</h3>
+                <h5><img src="img/w.png" alt=""><img src="img/up.png" alt="">Go Up</h5>
+                <h5><img src="img/d.png" alt=""><img src="img/right.png" alt="">Go Right</h5>
+                <h5><img src="img/s.png" alt=""><img src="img/down.png" alt="">Go Down</h5>
+                <h5><img src="img/a.png" alt=""><img src="img/left.png" alt="">Go Left</h5>
+                <h5><img src="img/period.png" alt=""><img src="img/z.png" alt="">Invisible</h5>
+                <h5><img src="img/shift.png" alt="">Pause The Game</h5>
+                <h5><img src="img/ctrl.png" alt="">Unpause</h5>
+            </section>
         </section>
     </main>
     <script src="snake.js">

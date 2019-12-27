@@ -14,6 +14,7 @@ canvas {
 
 .flx {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .ctr {
@@ -29,7 +30,7 @@ canvas {
 }
 
 .kotak ul {
-    padding: 10px 20px;
+    padding: 0px 20px;
 }
 
 .kotak ul li,
@@ -82,4 +83,17 @@ button:hover {
 
 button:active {
     transform: translateY(4px);
+}
+
+.controls img {
+    width: auto;
+    height: 30px;
+    margin: 0 5px;
+}
+
+.controls h5 {
+    margin: 5px 0;
+    display: flex;
+    line-height: 30px;
+    font-size: 15px;
 }

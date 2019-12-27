@@ -1,12 +1,18 @@
 const cvs = document.getElementById("snake");
 const ctx = cvs.getContext("2d");
-
+//game screen
 const box = 30;
 const gameX = 690;
 const gameY = 630;
-
+const canvasX = 690;
+const canvasY = 690;
+//game speed
 let speed = 100;
-
+//snake color
+let normalColor = 'rgb(100,80,10)'
+let deadColor = 'rgb(100,0,0)'
+let invColor = 'rgba(100,80,10,0.3)'
+let snakeColor;
 //read all food
 const meatImg = new Image();
 meatImg.src = 'img/meat.png';
@@ -16,6 +22,8 @@ const vgtbl = new Image();
 vgtbl.src = 'img/vegetable.png';
 const bmb = new Image();
 bmb.src = 'img/bomb.png';
+const enrgy = new Image();
+enrgy.src = 'img/energy.png'
 
 function makeFood() {
     let obj = {
@@ -62,22 +70,26 @@ let meat = makeFood(snake[0]);
 let junkfood = [];
 let veget = [];
 let bomb = [];
+let energydrink = [];
 
 //control the game
 let d;
 let pause = false;
 let dead = false;
-document.addEventListener("keydown", keyboard);
+let invisible = false;
+let invPower = 100;
+document.addEventListener("keydown", keyD);
+document.addEventListener("keyup", keyU);
 
-function keyboard(event) {
+function keyD(event) {
     let key = event.keyCode;
-    if (key == 37 && d != "RIGHT") {
+    if (key == 37 && d != "RIGHT" || key == 65 && d != "RIGHT") {
         d = "LEFT";
-    } else if (key == 38 && d != "DOWN") {
+    } else if (key == 38 && d != "DOWN" || key == 87 && d != "DOWN") {
         d = "UP";
-    } else if (key == 39 && d != "LEFT") {
+    } else if (key == 39 && d != "LEFT" || key == 68 && d != "LEFT") {
         d = "RIGHT";
-    } else if (key == 40 && d != "UP") {
+    } else if (key == 40 && d != "UP" || key == 83 && d != "UP") {
         d = "DOWN";
     }
 
@@ -95,6 +107,21 @@ function keyboard(event) {
         game = setInterval(draw, speed);
         pause = false;
     }
+
+    if (key == 90 && invPower > 0 || key == 190 && invPower > 0) {
+        invisible = true;
+    }
+
+    if (key === 13) {
+        reset();
+    }
+}
+
+function keyU(event) {
+    let key = event.keyCode;
+    if (key == 90 || key == 190) {
+        invisible = false;
+    }
 }
 
 function Collision(head, array) {
@@ -108,7 +135,7 @@ function Collision(head, array) {
 
 function eatFood(head, array) {
     for (let i = 0; i < array.length; i++) {
-        if (head.x == array[i].x && head.y == array[i].y) {
+        if (head.x == array[i].x && head.y == array[i].y && invisible === false) {
             array.splice(i, 1);
             return true;
         }
@@ -164,22 +191,49 @@ function draw() {
     //tampilan atas
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, 690, 60);
-
+    //score
     ctx.font = '30px arial';
     ctx.textBaseline = 'hanging';
     ctx.fillStyle = 'rgb(0,0,0)';
     ctx.fillText(`Score: ${score}`, 15, 22);
-
+    //length
     ctx.font = '15px arial';
     ctx.textBaseline = 'hanging';
     ctx.fillStyle = 'rgb(0,0,0)';
     ctx.fillText(`Length: ${snake.length}`, 17, 10);
-
-    ctx.font = '15px arial';
+    //invisible bar
+    ctx.fillStyle = 'rgb(230,230,230)' //background
+    ctx.beginPath();
+    ctx.moveTo(470, 20);
+    ctx.lineTo(670, 20);
+    ctx.lineTo(670, 40);
+    ctx.lineTo(470, 40);
+    ctx.closePath();
+    ctx.fill()
+    let barColor = invisible === true && invPower > 25 ? 'rgb(245, 242, 66)' : invPower <= 25 ? 'red' : 'rgb(52, 235, 67)';
+    ctx.fillStyle = barColor //inner box
+    ctx.beginPath();
+    ctx.moveTo(470, 20);
+    ctx.lineTo(470 + invPower * 2, 20);
+    ctx.lineTo(470 + invPower * 2, 40);
+    ctx.lineTo(470, 40);
+    ctx.closePath();
+    ctx.fill()
+    ctx.strokeStyle = 'black'; //outer box
+    ctx.beginPath();
+    ctx.moveTo(470, 20);
+    ctx.lineTo(670, 20);
+    ctx.lineTo(670, 40);
+    ctx.lineTo(470, 40);
+    ctx.closePath();
+    ctx.stroke()
+    ctx.font = '10px arial'; //text
     ctx.textBaseline = 'bottom';
     ctx.fillStyle = 'rgb(0,0,0)';
-    ctx.fillText('2019 By Andara Sophan', 515, 45);
-    ctx.fillText('Game Snake', 586, 28);
+    ctx.fillText('INVISIBLE', 620, 19);
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = 'rgb(0,0,0)';
+    ctx.fillText(`${invPower}/100`, 470, 42);
 
     //untuk game screen
     ctx.fillStyle = 'rgb(100,100,300)';
@@ -194,8 +248,24 @@ function draw() {
     ctx.fillStyle = 'rgb(250,210,210)';
     ctx.fillRect(30, 90, gameX - 60, gameY - 60);
 
-    //draw snake
-    drawSnake(snake, 'rgb(100,80,10)')
+    //copyright
+    ctx.font = '15px arial';
+    ctx.textBaseline = 'bottom';
+    ctx.fillStyle = 'rgb(0,0,0)';
+    ctx.fillText('2019 By Andara Sophan', 490, 646);
+    ctx.fillText('Game Snake', 561, 629);
+
+    //draw snake && check invisibility
+    if (invPower <= 0) {
+        invisible = false;
+    }
+    if (invisible === true && invPower > 0) {
+        snakeColor = invColor;
+        invPower -= 1;
+    } else {
+        snakeColor = normalColor;
+    }
+    drawSnake(snake, snakeColor)
 
     //draw items (all food & bomb)
     ctx.drawImage(meatImg, meat.x, meat.y, box, box);
@@ -208,53 +278,79 @@ function draw() {
     for (let i = 0; i < junkfood.length; i++) {
         ctx.drawImage(junk, junkfood[i].x, junkfood[i].y, box, box);
     }
+    for (let i = 0; i < energydrink.length; i++) {
+        ctx.drawImage(enrgy, energydrink[i].x, energydrink[i].y, box, box);
+    }
+
+    //cek diluar game screen atau tidak
+    let inFrame = true;
+    if (snake[0].x - box / 2 === 0 || snake[0].x + box / 2 === canvasX || snake[0].y - box / 2 === 0 || snake[0].y + box / 2 === canvasY) {
+        inFrame = false;
+    }
 
     // old head position
     let snakeX = snake[0].x;
     let snakeY = snake[0].y;
 
     // which direction
-    if (d == "LEFT") {
+    if (d == "LEFT" && snake[0].x - box / 2 > 0) {
         snakeX -= box;
-    } else if (d == "UP") {
+        inFrame = true;
+    } else if (d == "UP" && snake[0].y - box / 2 > 0) {
         snakeY -= box;
-    } else if (d == "RIGHT") {
+        inFrame = true;
+    } else if (d == "RIGHT" && snake[0].x + box / 2 < canvasX) {
         snakeX += box;
-    } else if (d == "DOWN") {
+        inFrame = true;
+    } else if (d == "DOWN" && snake[0].y + box / 2 < canvasY) {
         snakeY += box;
+        inFrame = true;
     }
 
     let tail = snake[snake.length - 1]; //buat ujung ular diwarnai saat gameover
     let convertHead = {};
-    convertHead['x'] = snake[0].x - box / 2;
-    convertHead['y'] = snake[0].y - box / 2;
+    convertHead['x'] = snakeX - box / 2;
+    convertHead['y'] = snakeY - box / 2;
 
-    if (convertHead.x == meat.x && convertHead.y == meat.y) {
+    if (convertHead.x == meat.x && convertHead.y == meat.y && invisible === false) {
         score++;
-        meat = makeFood(junkfood, convertHead, veget, bomb);
+        meat = makeFood(junkfood, convertHead, veget, bomb, energydrink);
         let prob = Math.random();
-        if (prob < 3 / 7) {
-            junkfood.push(makeFood(junkfood, convertHead, meat, veget, bomb));
-        } else if (prob < 6 / 7) {
-            veget.push(makeFood(junkfood, convertHead, meat, veget, bomb));
+        if (prob < 3 / 9) {
+            junkfood.push(makeFood(junkfood, convertHead, meat, veget, bomb, energydrink));
+        } else if (prob < 6 / 9) {
+            veget.push(makeFood(junkfood, convertHead, meat, veget, bomb, energydrink));
+        } else if (prob < 8 / 9) {
+            bomb.push(makeFood(junkfood, convertHead, meat, veget, bomb, energydrink));
         } else {
-            bomb.push(makeFood(junkfood, convertHead, meat, veget, bomb));
+            energydrink.push(makeFood(junkfood, convertHead, meat, veget, bomb, energydrink))
         }
     } else if (eatFood(convertHead, junkfood)) {
         let prob = Math.random();
         if (prob < 1 / 3) {
-            veget.push(makeFood(junkfood, convertHead, meat, veget, bomb));
+            veget.push(makeFood(junkfood, convertHead, meat, veget, bomb, energydrink));
         }
     } else if (eatFood(convertHead, veget)) {
         let prob = Math.random();
         if (prob < 1 / 3) {
-            bomb.push(makeFood(junkfood, convertHead, meat, veget, bomb));
+            bomb.push(makeFood(junkfood, convertHead, meat, veget, bomb, energydrink));
         }
         score++;
+        // let newInvPower = invPower + 20;
+        // newInvPower > 100 ? invPower = 100 : invPower = newInvPower;
         snake.pop();
         snake.pop();
+    } else if (eatFood(convertHead, energydrink)) {
+        let prob = Math.random();
+        if (prob < 1 / 3) {
+            bomb.push(makeFood(junkfood, convertHead, meat, veget, bomb, energydrink));
+        }
+        let newInvPower = invPower + 20;
+        newInvPower > 100 ? invPower = 100 : invPower = newInvPower;
     } else {
-        tail = snake.pop();
+        if (inFrame) {
+            tail = snake.pop();
+        }
     }
 
     // add new Head
@@ -264,18 +360,19 @@ function draw() {
     };
 
     // game over
-    if (snakeX < box || snakeX > 22 * box || snakeY < 3 * box || snakeY > 22 * box || Collision(newHead, snake) || Collision(convertHead, bomb)) {
-        drawSnake(snake, 'rgb(100,0,0)')
-        if (snake.length >= 1) {
-            drawBody(tail, 'rgb(100,0,0)')
-        } else {
-            drawHead(tail, 'rgb(100,0,0)')
+    if (snakeX < box && invisible === false || snakeX > 22 * box && invisible === false || snakeY < 3 * box && invisible === false || snakeY > 22 * box && invisible === false || Collision(newHead, snake) && invisible === false || Collision(convertHead, bomb) && invisible === false) {
+        drawSnake(snake, deadColor)
+        if (snake.length >= 1 && inFrame === true) {
+            drawBody(tail, deadColor)
+        } else if (inFrame === true) {
+            drawHead(tail, deadColor)
         }
         clearInterval(game);
         dead = true;
     }
-
-    snake.unshift(newHead);
+    if (inFrame) {
+        snake.unshift(newHead);
+    }
 }
 let game = setInterval(draw, speed);
 
@@ -295,8 +392,10 @@ function reset() {
     junkfood = [];
     veget = [];
     bomb = [];
+    energydrink = [];
     d = undefined;
     pause = false;
     dead = false;
+    invPower = 100;
     game = setInterval(draw, speed);
 }
