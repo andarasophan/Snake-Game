@@ -59,6 +59,13 @@ function makeFood() {
     return obj;
 }
 
+function convertingHead(snake) {
+    let convertHead = {};
+    convertHead['x'] = snake.x - box / 2;
+    convertHead['y'] = snake.y - box / 2;
+    return convertHead;
+}
+
 //initialization
 let score = 0;
 let snake = [];
@@ -66,7 +73,7 @@ snake[0] = {
     x: gameX / 2,
     y: gameY / 2 + 60
 };
-let meat = makeFood(snake[0]);
+let meat = makeFood(convertingHead(snake[0]));
 let junkfood = [];
 let veget = [];
 let bomb = [];
@@ -307,45 +314,47 @@ function draw() {
         inFrame = true;
     }
 
-    let tail = snake[snake.length - 1]; //buat ujung ular diwarnai saat gameover
-    let convertHead = {};
-    convertHead['x'] = snakeX - box / 2;
-    convertHead['y'] = snakeY - box / 2;
+    // add new Head
+    let newHead = {
+        x: snakeX,
+        y: snakeY
+    };
 
-    if (convertHead.x == meat.x && convertHead.y == meat.y && invisible === false) {
+    let tail = snake[snake.length - 1]; //buat ujung ular diwarnai saat gameover
+
+    //cek makan item
+    if (convertingHead(newHead).x == meat.x && convertingHead(newHead).y == meat.y && invisible === false) {
         score++;
-        meat = makeFood(junkfood, convertHead, veget, bomb, energydrink);
+        meat = makeFood(junkfood, convertingHead(newHead), veget, bomb, energydrink);
         let prob = Math.random();
         if (prob < 3 / 9) {
-            junkfood.push(makeFood(junkfood, convertHead, meat, veget, bomb, energydrink));
+            junkfood.push(makeFood(junkfood, convertingHead(newHead), meat, veget, bomb, energydrink));
         } else if (prob < 6 / 9) {
-            veget.push(makeFood(junkfood, convertHead, meat, veget, bomb, energydrink));
+            veget.push(makeFood(junkfood, convertingHead(newHead), meat, veget, bomb, energydrink));
         } else if (prob < 8 / 9) {
-            bomb.push(makeFood(junkfood, convertHead, meat, veget, bomb, energydrink));
+            bomb.push(makeFood(junkfood, convertingHead(newHead), meat, veget, bomb, energydrink));
         } else {
-            energydrink.push(makeFood(junkfood, convertHead, meat, veget, bomb, energydrink))
+            energydrink.push(makeFood(junkfood, convertingHead(newHead), meat, veget, bomb, energydrink))
         }
-    } else if (eatFood(convertHead, junkfood)) {
+    } else if (eatFood(convertingHead(newHead), junkfood)) {
         let prob = Math.random();
         if (prob < 1 / 3) {
-            veget.push(makeFood(junkfood, convertHead, meat, veget, bomb, energydrink));
+            veget.push(makeFood(junkfood, convertingHead(newHead), meat, veget, bomb, energydrink));
         }
-    } else if (eatFood(convertHead, veget)) {
+    } else if (eatFood(convertingHead(newHead), veget)) {
         let prob = Math.random();
         if (prob < 1 / 3) {
-            bomb.push(makeFood(junkfood, convertHead, meat, veget, bomb, energydrink));
+            bomb.push(makeFood(junkfood, convertingHead(newHead), meat, veget, bomb, energydrink));
         }
         score++;
-        // let newInvPower = invPower + 20;
-        // newInvPower > 100 ? invPower = 100 : invPower = newInvPower;
         snake.pop();
         snake.pop();
-    } else if (eatFood(convertHead, energydrink)) {
+    } else if (eatFood(convertingHead(newHead), energydrink)) {
         let prob = Math.random();
         if (prob < 1 / 3) {
-            bomb.push(makeFood(junkfood, convertHead, meat, veget, bomb, energydrink));
+            bomb.push(makeFood(junkfood, convertingHead(newHead), meat, veget, bomb, energydrink));
         }
-        let newInvPower = invPower + 20;
+        let newInvPower = invPower + 20; //tambah invisible power
         newInvPower > 100 ? invPower = 100 : invPower = newInvPower;
     } else {
         if (inFrame) {
@@ -353,14 +362,8 @@ function draw() {
         }
     }
 
-    // add new Head
-    let newHead = {
-        x: snakeX,
-        y: snakeY
-    };
-
     // game over
-    if (snakeX < box && invisible === false || snakeX > 22 * box && invisible === false || snakeY < 3 * box && invisible === false || snakeY > 22 * box && invisible === false || Collision(newHead, snake) && invisible === false || Collision(convertHead, bomb) && invisible === false) {
+    if (snakeX < box && invisible === false || snakeX > 22 * box && invisible === false || snakeY < 3 * box && invisible === false || snakeY > 22 * box && invisible === false || Collision(newHead, snake) && invisible === false || Collision(convertingHead(newHead), bomb) && invisible === false) {
         drawSnake(snake, deadColor)
         if (snake.length >= 1 && inFrame === true) {
             drawBody(tail, deadColor)
@@ -388,7 +391,7 @@ function reset() {
         x: gameX / 2,
         y: gameY / 2 + 60
     };
-    meat = makeFood(snake[0]);
+    meat = makeFood(convertingHead(snake[0]));
     junkfood = [];
     veget = [];
     bomb = [];
