@@ -27,8 +27,8 @@ enrgy.src = 'img/energy.png'
 
 function makeFood() {
     let obj = {
-        x: (Math.floor(Math.random() * 20.99999) + 1) * box,
-        y: (Math.floor(Math.random() * 18.99999) + 3) * box
+        x: (Math.floor(Math.random() * 21) + 1) * box,
+        y: (Math.floor(Math.random() * 19) + 3) * box
     }
     let i = 0;
     while (i < arguments.length) {
@@ -36,8 +36,8 @@ function makeFood() {
             let status = true;
             for (let j = 0; j < arguments[i].length; j++) {
                 if (obj.x === arguments[i][j].x && obj.y === arguments[i][j].y) {
-                    obj.x = (Math.floor(Math.random() * 20.99999) + 1) * box;
-                    obj.y = (Math.floor(Math.random() * 18.99999) + 3) * box;
+                    obj.x = (Math.floor(Math.random() * 21) + 1) * box;
+                    obj.y = (Math.floor(Math.random() * 19) + 3) * box;
                     i = 0;
                     status = false;
                     break;
@@ -48,8 +48,8 @@ function makeFood() {
             }
         } else {
             if (obj.x === arguments[i].x && obj.y === arguments[i].y) {
-                obj.x = (Math.floor(Math.random() * 20.99999) + 1) * box;
-                obj.y = (Math.floor(Math.random() * 18.99999) + 3) * box;
+                obj.x = (Math.floor(Math.random() * 21) + 1) * box;
+                obj.y = (Math.floor(Math.random() * 19) + 3) * box;
                 i = 0;
             } else {
                 i++;

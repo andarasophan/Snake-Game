@@ -51,6 +51,29 @@
     <script src="snake.js">
     </script>
 
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-analytics.js"></script>
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyAWaQAoqw0vtCxdHKQ9u2m68ybiIHmshEs",
+    authDomain: "snake-game-8ef92.firebaseapp.com",
+    databaseURL: "https://snake-game-8ef92.firebaseio.com",
+    projectId: "snake-game-8ef92",
+    storageBucket: "snake-game-8ef92.appspot.com",
+    messagingSenderId: "623207256642",
+    appId: "1:623207256642:web:c6d1568f7c58cd018a53db",
+    measurementId: "G-0WQDBS8MV8"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+</script>
 </body>
 
 
